@@ -142,20 +142,22 @@ def best_param_models():
         random_state=42
     )
 
-    return log_reg, rf, svm, xgb
+    model_dictionary = {"log_reg": log_reg, "rf": rf, "svm": svm, "xgb": xgb}
+
+    return model_dictionary
 
 
 def ind_model_pipeline(preprocessor, X_train, y_train):
 
-    best_parameterized_models = best_param_models()
+    model_dictionary = ["log_reg", "rf", "svm", "xgb"]
 
     final_models = {}
 
-    for model_name in best_parameterized_models:
+    for model_name in model_dictionary:
 
         pipeline = Pipeline([
             ("preprocessor", preprocessor),
-            ("model", model_name)
+            ("model", best_param_models()[model_name])
         ])
 
         pipeline.fit(X_train, y_train)
@@ -166,4 +168,5 @@ def ind_model_pipeline(preprocessor, X_train, y_train):
     return final_models
 
 
-print(ind_model_pipeline(data_preprocessor, data_X_train, encoded_y_train))
+trained_models = ind_model_pipeline(data_preprocessor, data_X_train, encoded_y_train)
+
