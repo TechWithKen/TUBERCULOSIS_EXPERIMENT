@@ -1,7 +1,6 @@
 # data_cleaning.py
 
 import pandas as pd
-from dataloading import load_data
 
 LEAKAGE_COLS = [
     'patient_id',

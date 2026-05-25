@@ -1,6 +1,4 @@
 from sklearn.model_selection import train_test_split
-from data_cleaning import apply_label
-from dataloading import load_data
 
 
 def split_features(df):
