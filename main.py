@@ -7,15 +7,11 @@ from data_cleaning import clean_data, apply_label
 from feature_engineering import split_features, get_feature_groups
 from data_preprocessing import build_preprocessor, encode_target
 from models import get_models
-from training import run_batch_grid_search
-from evaluation import evaluate_all_models
+from train import run_batch_grid_search
+from metrics import evaluate_all_models
 
 import pandas as pd
 
-
-# =========================
-# 1. LOAD + CLEAN DATA
-# =========================
 
 raw_data = load_data()
 cleaned_data = clean_data(apply_label(raw_data))
