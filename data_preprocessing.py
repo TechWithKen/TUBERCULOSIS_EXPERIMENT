@@ -1,54 +1,23 @@
-# data_processing.py
-
-import pandas as pd
-from dataloading import load_data
-
-LEAKAGE_COLS = [
-    'patient_id',
-    'tb_type',
-    'treatment_started',
-    'treatment_category',
-    'treatment_outcome',
-    'tb_probability_score',
-    'died',
-    'tb_status',
-    'cd4_count'
-]
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
+from sklearn.compose import ColumnTransformer
 
 
-def clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Performs cleaning + leakage removal + basic preprocessing.
-    """
+def encode_target(y_train):
+    encoder = LabelEncoder()
 
-    df_clean = df.drop(columns=[c for c in LEAKAGE_COLS if c in df.columns])
+    y_train_enc = encoder.fit_transform(y_train)
 
-    # Handle missing values (simple medical-safe defaults)
-    if "symptom_duration_weeks" in df_clean.columns:
-        df_clean["symptom_duration_weeks"] = df_clean["symptom_duration_weeks"].fillna(0)
-
-    if "smear_status" in df_clean.columns:
-        df_clean["smear_status"] = df_clean["smear_status"].fillna("Negative")
-
-    # Fill boolean-like medical indicators
-    cols_to_fill_false = [
-        'culture_confirmed',
-        'cavitary_disease',
-        'mdr_tb',
-        'xdr_tb',
-        'xray_abnormal'
-    ]
-
-    for col in cols_to_fill_false:
-        if col in df_clean.columns:
-            df_clean[col] = df_clean[col].fillna(False)
-
-    print("Data cleaned successfully.")
-    print(f"Shape after cleaning: {df_clean.shape}")
-
-    return df_clean
+    return y_train_enc, encoder
 
 
-dataset = load_data()
+def build_preprocessor(categorical_features, numerical_features):
 
-print(clean_data(dataset))
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', StandardScaler(), numerical_features),
+            ('cat', OneHotEncoder(drop='first', handle_unknown='ignore'), categorical_features)
+        ],
+        remainder='passthrough'
+    )
+
+    return preprocessor

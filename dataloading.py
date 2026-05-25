@@ -12,6 +12,3 @@ def load_data():
 
     print(f"Data loaded with shape: {df.shape}")
     return df
-
-
-print(load_data())
